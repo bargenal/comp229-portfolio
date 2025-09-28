@@ -3,7 +3,7 @@ import MainRouter from '../MainRouter.jsx';
 
 const App = () => {
   return (
-    <Router>
+    <Router basename="/comp229-portfolio">
       <div style={{ 
         minHeight: '100vh', 
         backgroundColor: '#000000', 

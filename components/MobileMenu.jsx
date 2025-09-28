@@ -15,11 +15,11 @@ export const MobileMenu = ({ menuOpen, setMenuOpen }) => {
 
     return (
         <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
-            <Link to="/" onClick={handleLinkClick}>Home</Link>
-            <Link to="/about" onClick={handleLinkClick}>About</Link>
-            <Link to="/projects" onClick={handleLinkClick}>Projects</Link>
-            <Link to="/contact" onClick={handleLinkClick}>Contact</Link>
-            <Link to="/education" onClick={handleLinkClick}>Education</Link>
+            <Link to="/comp229-portfolio" onClick={handleLinkClick}>Home</Link>
+            <Link to="/comp229-portfolio/about" onClick={handleLinkClick}>About</Link>
+            <Link to="/comp229-portfolio/projects" onClick={handleLinkClick}>Projects</Link>
+            <Link to="/comp229-portfolio/contact" onClick={handleLinkClick}>Contact</Link>
+            <Link to="/comp229-portfolio/education" onClick={handleLinkClick}>Education</Link>
         </div>
     );
 };
