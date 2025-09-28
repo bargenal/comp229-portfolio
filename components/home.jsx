@@ -13,8 +13,8 @@ export default function Home(){
                 </p>
                 
                 <div className="button-group">
-                    <Link to="/comp229-portfolio/projects" className="btn-primary">View Projects</Link>
-                    <Link to="/comp229-portfolio/contact" className="btn-secondary">Contact Me</Link>
+                    <Link to="/projects" className="btn-primary">View Projects</Link>
+                    <Link to="/contact" className="btn-secondary">Contact Me</Link>
                 </div>
             </div>
         </section>
