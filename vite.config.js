@@ -5,4 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: "/comp229-portfolio/",
+  server: {
+    // proxy API requests to the backend server
+    proxy: {
+      '/api': 'http://localhost:3000',
+      '/auth': 'http://localhost:3000'
+    }
+  }
 });

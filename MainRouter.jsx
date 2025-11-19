@@ -8,6 +8,8 @@ import About from './src/about.jsx'
 import Contact from './src/contact.jsx'
 import Education from './src/education.jsx'
 import Project from './src/projects.jsx'
+import Signin from './src/signin.jsx'
+import Signup from './src/signup.jsx'
 import Layout  from './components/layout.jsx'
 
 // Main router that defines all app routes
@@ -29,6 +31,8 @@ const MainRouter = () => {
             <Route exact path='/projects' element={<Project/>} />
             {/* Layout route */}
             <Route exact path='/layout' element={<Layout/>} />
+            <Route exact path='/signin' element={<Signin/>} />
+            <Route exact path='/signup' element={<Signup/>} />
         </Routes>
     </div>)
 }

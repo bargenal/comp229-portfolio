@@ -1,66 +1,84 @@
 // Projects page - this displays my featured projects in a grid layout
+import React, { useEffect, useState } from 'react';
+import auth from './auth.js';
+
 export default function Projects(){
+    const [projects, setProjects] = useState([]);
+    const [form, setForm] = useState({ title: '', firstname: '', lastname: '', email: '', completion: '', description: ''});
+    const [error, setError] = useState('');
+
+    const load = () => {
+        fetch('/api/projects')
+          .then(res => res.json())
+          .then(data => setProjects(data))
+          .catch(err => console.error(err));
+    };
+
+    useEffect(()=>{ load(); }, []);
+
+    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+    const handleCreate = async (e) => {
+        e.preventDefault();
+        setError('');
+        try{
+            const token = auth.getToken();
+            const res = await fetch('/api/projects', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify(form)
+            });
+            if (!res.ok) {
+                const err = await res.json();
+                setError(err.error || 'Create failed');
+                return;
+            }
+            setForm({ title: '', firstname: '', lastname: '', email: '', completion: '', description: ''});
+            load();
+        }catch(err){ setError('Network error'); }
+    };
+
+    const handleDelete = async (id) => {
+        if (!confirm('Delete this project?')) return;
+        try{
+            const token = auth.getToken();
+            const res = await fetch(`/api/projects/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+            if (res.ok) load();
+        }catch(e){ console.error(e); }
+    };
+
+    const me = auth.isAuthenticated();
+    const role = me && me.user ? me.user.role : null;
+
     return (
         <section className="section">
             <div className="section-container">
-                {/* Projects page title */}
                 <h2 className="about-title">Featured Projects</h2>
+                {role === 'admin' && (
+                    <div style={{ marginBottom: 20 }}>
+                        <h3>Create Project</h3>
+                        <form onSubmit={handleCreate}>
+                            <input name="title" placeholder="Title" value={form.title} onChange={handleChange} required />
+                            <input name="firstname" placeholder="First name" value={form.firstname} onChange={handleChange} required />
+                            <input name="lastname" placeholder="Last name" value={form.lastname} onChange={handleChange} required />
+                            <input name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
+                            <input name="completion" placeholder="Completion date (YYYY-MM-DD)" value={form.completion} onChange={handleChange} />
+                            <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required />
+                            <button type="submit">Create</button>
+                        </form>
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                    </div>
+                )}
 
-                {/* Grid container for project cards */}
                 <div className="projects-grid">
-                    
-                    {/* Banking System project */}
-                    <div className="project-card">
-                        <h3 className="project-title">Banking System Simulation</h3>
-                        <p className="project-description">Banking system where you can deposit, withdraw, and manage accounts! Includes safeguards like overdraft limits and minimum balance requirements.</p>
-                        
-                        {/* Displaying the technology used for this project */}
-                        <div className="project-tech">
-                            <span className="tech-tag">C#</span>
-                            <span className="tech-tag">.NET</span>
+                    {projects.map(p => (
+                        <div key={p._id} className="project-card">
+                            <h3 className="project-title">{p.title}</h3>
+                            <p className="project-description">{p.description}</p>
+                            <div className="project-meta">By {p.firstname} {p.lastname} — {p.email} — {p.completion ? new Date(p.completion).toLocaleDateString() : ''}</div>
+                            {role === 'admin' && <button onClick={()=>handleDelete(p._id)}>Delete</button>}
                         </div>
-                        
-                        {/* Link to the project's GitHub repository */}
-                        <div className="project-links">
-                            <a href="https://github.com/brandon-almanza/C-Sharp-Programming/tree/main/Banking%20System%20Simulation/A3_BrandonArgenalAlmanza" className="project-link primary">View Project</a>
-                        </div>
-                    </div>
-
-                    {/* Bug Smasher Game project */}
-                    <div className="project-card">
-                        <h3 className="project-title">Bug Smasher Game</h3>
-                        <p className="project-description">Interactive web game where you squash bugs to earn points! However your reaction speed will be tested.</p>
-                        
-                        {/* Displaying the technology used for this project */}
-                        <div className="project-tech">
-                            <span className="tech-tag">HTML</span>
-                            <span className="tech-tag">CSS</span>
-                            <span className="tech-tag">JavaScript</span>
-                        </div>
-                        
-                        {/* Link to project's GitHub repository */}
-                        <div className="project-links">
-                            <a href="https://github.com/brandon-almanza/Client-Side-Web-Development/tree/main/Assignment%205%20(Bug%20Smasher%20Game)" className="project-link primary">View Project</a>
-                        </div>
-                    </div>
-
-                    {/* Load Balancer project */}
-                    <div className="project-card">
-                        <h3 className="project-title">Load Balancer & Web Server Hosting</h3>
-                        <p className="project-description">Configured a load balancer with multiple web servers using CentOS virtual machines! Used Nginx configurations to distribute traffic efficiently and ensure high availability.</p>
-                        
-                        {/* Displaying the technology used for this project */}
-                        <div className="project-tech">
-                            <span className="tech-tag">CentOS</span>
-                            <span className="tech-tag">HTML</span>
-                            <span className="tech-tag">NGINX</span>
-                        </div>
-                        
-                        {/* link to project's GitHub repository (NEED TO DO AS I DO NOT HAVE A REPO FOR IT YET) */}
-                        <div className="project-links">
-                            <a href="#projects" className="project-link primary">View Project</a>
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
         </section>
